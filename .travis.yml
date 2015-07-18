@@ -37,7 +37,7 @@ install:
   - rm -rf ../BrewfileTest
 before_script:
   - touch "$brewprefix/Library/Brewfile"
-  - installed_brew=$(brew command brew-file)
+  - installed_brew=$(brew command file)
   - brewprefix=$(brew --prefix)
   - brewfile=$brewprefix/Library/Brewfile
   - testaccount=rcmdnk
@@ -179,7 +179,7 @@ script:
   - echo "file 'BrewfileExt'" >> $testfile
   - coverage run --parallel-mode $exe -F brewdler brew cask uninstall google-chrome
   # Clean up tests
-  - echo "brew brew-file $version" > $testfile
+  - echo "tap brew-file" > $testfile
   - echo "brew python" >> $testfile
   - echo "file BrewfileExt" >> $testfile
   - echo "brew bash" >> $testfile
