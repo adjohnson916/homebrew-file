@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # brew command wrapper for brew-file
 brew () {
   # No arguments

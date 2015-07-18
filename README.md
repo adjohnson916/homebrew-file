@@ -7,34 +7,28 @@ Brew-file
 Brwefile manager for Homebrew, inspired by [Brewdler](https://github.com/andrew/brewdler)
 (Brew-file was Renamed from brewall).
 
-Brewfile dumped by [homebrew-brewdler](https://github.com/Homebrew/homebrew-brewdler)
+Brewfile dumped by [homebrew-brewdler](https://github.com/Homebrew/homebrew-brewdler),
+or [Homebrew/homebrew-bundle](https://github.com/Homebrew/homebrew-bundle)
 can be used as input, too.
-
 
 ## Installation
 
-By install script:
-
-    $ curl -fsSL https://raw.github.com/rcmdnk/homebrew-file/install/install.sh |sh
-
-This installs Homebrew if it has not been installed, too.
-
 By Homebrew:
 
-    $ brew install rcmdnk/file/brew-file
+    $ brew tap rcmdnk/file
 
-Or download `bin/brew-file` and put it in anywhere under `PATH` (e.g. `~/usr/bin/`)
+Now you can use `brew file` command.
 
-
-Then, add following lines in you **.bashrc** or **.zshrc** to wrap `brew` command:
+Then, add following lines in you **.bashrc** or **.zshrc** to wrap `brew` command
+and enable the completion:
 
 ```sh
-if [ -f $(brew --prefix)/etc/brew-wrap ];then
-  source $(brew --prefix)/etc/brew-wrap
+if brew command setup-file >&/dev/null;then
+  eval "$(brew setup-file)"
 fi
 ```
 
-**brew-wrap** wraps the original `brew` command
+It wraps the original `brew` command
 for an automatic update of **Brewfile** when you execute
 such a `brew install` or `brew uninstall`.
 
@@ -46,7 +40,7 @@ If you don't have **Brewfile**, first, do:
 
     $ brew init
 
-`brew init` is same as `brew file init`, if you setup `brew-wrap` as above.
+`brew init` is same as `brew file init`, if you use `setup-file` as above.
 
 Note: In below, such `cat` and `set_repo` command can be used directly after `brew`,
 but `install` or `update` need to use with `brew file` because
@@ -64,7 +58,7 @@ and install packages listed in **Brewfile** by:
 
 After that, you need to do only normal `brew` commands, like `brew install` or `brew uninstall`.
 After each command, **Brewfile** is updated automatically
-if you set `brew-wrap` as above.
+if you use `setup-file` as above.
 
 When you get new Mac, copy 
 **/usr/local/Library/Brewfile** to new Mac

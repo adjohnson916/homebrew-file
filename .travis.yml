@@ -19,14 +19,12 @@ before_install:
   - '[ "$TRAVIS_PULL_REQUEST" = "false" ] && cp .travis_rsa ~/.ssh/id_rsa || :'
   - '[ "$TRAVIS_PULL_REQUEST" = "false" ] && chmod 600 ~/.ssh/id_rsa || :'
   - '[ "$TRAVIS_PULL_REQUEST" = "false" ] && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config || :'
-  - version=""
-  - 'if [ $TRAVIS_BRANCH = master ];then version="--HEAD";elif [ $TRAVIS_BRANCH = bash ];then version="--bash";fi'
   - brew update
 install:
   - '[ "$coveralls" = "coveralls-python" ] && sudo pip install coveralls || :'
   - '[ "$coveralls" = "python-coveralls" ] && sudo pip -e . --use-mirrors || :'
   - brew list > brewlist.orig
-  - brew install rcmdnk/file/brew-file $version
+  - brew tap rcmdnk/file
   - brew tap homebrew/dupes # needed, as current travis environment is old and has some packages which are now under dupes, but travis environment doesn't have dupes tap.
   - cd ../
   - git clone git@github.com:rcmdnk/BrewfileTest
@@ -39,7 +37,7 @@ install:
   - rm -rf ../BrewfileTest
 before_script:
   - touch "$brewprefix/Library/Brewfile"
-  - installed_brew=$(which brew-file)
+  - installed_brew=$(brew command brew-file)
   - brewprefix=$(brew --prefix)
   - brewfile=$brewprefix/Library/Brewfile
   - testaccount=rcmdnk
@@ -52,9 +50,9 @@ before_script:
   - git config --global push.default simple # to suppress git warning
 script:
   # Check differences between checked out's version and brew installed version
-  - '[ "$version" != "" ] && diff $installed_brew $exe || :'
-  - '[ "$version" != "" ] && brew file help | ( $exe help | diff /dev/fd/3 -) 3<&0 || :'
-  - '[ "$version" != "" ] && brew file version | ( $exe version | diff /dev/fd/3 -) 3<&0 || :'
+  - 'diff $installed_brew $exe || :'
+  - 'brew file help | ( $exe help | diff /dev/fd/3 -) 3<&0 || :'
+  - 'brew file version | ( $exe version | diff /dev/fd/3 -) 3<&0 || :'
   # Check with old Python (expect 2.7.5)
   - python --version
   - 'coverage run --parallel-mode $exe brew install tig --HEAD --with-docs | :' # old version can't use hyphen options at brew file brew.
@@ -200,8 +198,8 @@ script:
   # Push current Brewfile in homebrew-file to BrewfileTest
   - cp Brewfile $testfile
   - '[ "$TRAVIS_PULL_REQUEST" = "false" ] && coverage run --parallel-mode $exe push -V 0'
-  # Test with brew-wrap
-  - source $(brew --prefix)/etc/brew-wrap
+  # Test with setup-file
+  - 'if brew command setup-file >&/dev/null;then eval "$(brew setup-file)";fi'
   - type brew
   - brew list
   - brew install hub
@@ -209,12 +207,6 @@ script:
   # send coverage result to coveralls
   - coverage combine # should be done before removing brew-file
   - coveralls
-  # Install test
-  - rm -rf $brewprefix/bin/brew $brewprefix/Library $brewprefix/Cellar
-  - rm -rf $brewprefix/.git*
-  - curl -fsSL https://raw.github.com/rcmdnk/homebrew-file/install/install.sh |sh
-  - brew help
-  - brew file help
 notifications:
   email:
     recipients:

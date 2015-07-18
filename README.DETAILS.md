@@ -13,6 +13,8 @@ can be used as input, too.
 
 ## Update
 
+### 19/Jul/2015
+
 ### 28/Sep/2014
 
 Master branch was switched to python version from bash version.
@@ -53,17 +55,9 @@ or
 
 ## Installation
 
-By install script:
-
-    $ curl -fsSL https://raw.github.com/rcmdnk/homebrew-file/install/install.sh |sh
-
-This installs Homebrew if it has not been installed, too.
-
 By Homebrew:
 
-    $ brew install rcmdnk/file/brew-file
-
-Or download `bin/brew-file` and put it in anywhere under `PATH` (e.g. `~/usr/bin/`)
+    $ brew tap rcmdnk/file
 
 ## Manage Brewfile with GitHub
 
@@ -403,13 +397,10 @@ my blogs: [Japanese](http://rcmdnk.github.io/blog/tags/brew-file/), [English](ht
 
 > [Brew-file: Manager for packages of Homebrew](http://rcmdnk.github.io/en/blog/2014/11/15/computer-mac-homebrew/) (en)
 
-## brew-wrap
+## setup-file
 
 If you want to automatically update Brewfile after `brew install/uninstall`,
-please use `brew-wrap`.
-
-[homebrew-file/etc/brew-wrap](https://github.com/rcmdnk/homebrew-file/blob/master/etc/brew-wrap)
-has a wrapper function `brew`.
+please use `setup-file`.
 
 Features:
 
@@ -426,16 +417,10 @@ Features:
 To enable it, just read this file in your `.bashrc` or any of your setup file.
 
 ```sh
-if [ -f $(brew --prefix)/etc/brew-wrap ];then
-  source $(brew --prefix)/etc/brew-wrap
+if brew command setup-file >&/dev/null;then
+  eval "$(brew setup-file)"
 fi
 ```
-
-`brew` function in `brew-wrap` executes original `brew`
-if `brew-file` is not included.
-
-Therefore, you can safely uninstall/re-install brew-file
-even if you have already sourced it.
 
 Some subcommands of `brew-file` can be used
 as a subcommand of `brew`, if the command is not in original brew subcommands.
@@ -452,57 +437,12 @@ With completion settings below,
 In addition, the completion for `brew file` is also enabled,
 as same as `brew-file` command.
 
-:warning:
+In addition, `setup-file` setups Bash/Zsh completions.
 
-Previously, `brew-wrap` was in `bin/brew-wrap`,
-and it was used like `alias brew="brew-wrap"`.
-
-If you have this obsolete setting, please delete and renew as above.
-
-## Completion
-
-Functions for Bash/Zsh completions are also installed.
-
-For Bash, please install
-[Bash-Completion](http://bash-completion.alioth.debian.org/)
-by:
-
-    $ brew install bash-completion
-
-then, add following settings to your **.bashrc**:
+For Zsh completion, if you've not enabled Zsh completion,
+add following lines, too:
 
 ```sh
-brew_completion=$(brew --prefix 2>/dev/null)/etc/bash_completion
-if [ $? -eq 0 ] && [ -f "$brew_completion" ];then
-  source $brew_completion
-fi
-```
-
-For Zsh, add following settings in your **.zshrc**:
-
-```sh
-brew_completion=$(brew --prefix 2>/dev/null)/share/zsh/zsh-site-functions
-if [ $? -eq 0 ] && [ -d "$brew_completion" ];then
-  fpath=($brew_completion $fpath)
-fi
 autoload -U compinit
 compinit
 ```
-
-In case you have installed [zsh-completions](https://github.com/zsh-users/zsh-completions)
- (can be installed by brew: `$ brew install zsh-completions`)、
-settings can be like:
-
-```sh
-for d in "/share/zsh-completions" "/share/zsh/zsh-site-functions";do
-  brew_completion=$(brew --prefix 2>/dev/null)$d
-  if [ $? -eq 0 ] && [ -d "$brew_completion" ];then
-    fpath=($brew_completion $fpath)
-  fi
-done
-autoload -U compinit
-compinit
-```
-
-If you are using `brew-wrap`, please write these completion settings
-**BEFORE** `brew-wrap` reading.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+brew_file_dir="$(dirname "$(brew command setup-file)")/.."
+cat << EOF
+if [ "\$BASH_VERSION" != "" ];then
+  source "${brew_file_dir}/etc/bash_completion.d/brew-file"
+elif [ "\$ZSH_VERSION" != "" ];then
+  fpath=("${brew_file_dir}/share/zsh/site-functions/" $fpath)
+fi
+EOF
+cat "${brew_file_dir}/etc/brew-wrap"
